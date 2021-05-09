@@ -21,7 +21,6 @@ protected:
 	psActiveRenderInfo camera;
 	// No default constructor.
 	psDisplay *display;
-	psMesh *mesh0;
 	const float fps;
 	const float ups;
 

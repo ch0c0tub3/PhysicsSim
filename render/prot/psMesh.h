@@ -5,6 +5,7 @@
 #include "util/math/psVector3.h"
 #include "util/psFileLoader.h"
 #include <stdlib.h>
+#include <vector>
 
 #pragma warning(push)
 #pragma warning(disable : 6386)
@@ -30,10 +31,12 @@ public:
 			int components[3][3];
 		};
 		std::vector<face> faces;
-		size_t size;
-		const char **lines = readfile_to_lines(filepath, &size);
-		for (size_t i = 0; i < size; i++) {
-			char *line = (char *)trim_str(lines[i]);
+		struct s_vector *lines = readfile_to_lines(filepath);
+		for (size_t i = 0; i < lines->size; i++) {
+			if (!lines->data[i])
+				break;
+
+			char *line = (char *)trim_str(lines->data[i]);
 			if (!sizeof(line) || line[0] == '#')
 				continue;
 

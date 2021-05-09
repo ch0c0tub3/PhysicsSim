@@ -3,6 +3,7 @@
 
 // Note for later: try to find a better alternative to this shit.
 #include <Windows.h>
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <string.h>
 #include <iostream>

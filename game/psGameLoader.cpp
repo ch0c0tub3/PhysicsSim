@@ -4,7 +4,6 @@
 psGameLoader::psGameLoader(int width, int height, const char *title, float _fps, float _ups) : fps(_fps), ups(_ups) {
 
 	display = &psDisplay(width, height, title);
-	mesh0 = &psMesh::_from_obj("resource/cube.obj");
 }
 
 psGameLoader::~psGameLoader() {
@@ -22,7 +21,6 @@ void psGameLoader::sub_render() {
 	matrixStack.updateModelViewMatrix(psVector3(0.f, 0.f, 10.f), psVector3(), 1.f);
 	shader.setUniform("modelViewMatrix", matrixStack.getModelViewMatrix());
 	shader.setUniform("color", psVector3(0.f, 1.f, 0.3f));
-	mesh0->render();
 	shader.unbind();
 	display->refresh();
 }
@@ -61,7 +59,6 @@ void psGameLoader::run() {
 
 void psGameLoader::terminate() {
 
-	mesh0->dispose();
 	shader.dispose();
 	display->dispose();
 }

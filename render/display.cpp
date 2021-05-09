@@ -36,6 +36,7 @@ void psDisplay::setHeight(int height) {
 
 psStateDefinition psDisplay::initContext() {
 
+	printf("%s\n", "Initializing GLFW...");
 	if (!glfwInit())
 		return INIT_MISMATCH;
 
@@ -72,6 +73,14 @@ psStateDefinition psDisplay::initContext() {
 	const GLFWvidmode *vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 	glfwSetWindowPos(handle, (vidmode->width - 640) / 2, (vidmode->height - 480) / 2);
 	glfwMakeContextCurrent(handle);
+
+	printf("%s\n", "Initializing GLEW...");
+	GLenum st = glewInit();
+	if (st) {
+		printf("%s\n", glewGetErrorString(st));
+		return INIT_MISMATCH;
+	}
+
 	glfwSwapInterval(1);
 	glfwShowWindow(handle);
 
