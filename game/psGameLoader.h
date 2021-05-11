@@ -17,10 +17,11 @@ protected:
 
 	psClock clock;
 	psMatrixStack matrixStack;
-	psShader shader;
 	psActiveRenderInfo camera;
 	// No default constructor.
 	psDisplay *display;
+	psMesh *test_mesh;
+	psShader shader;
 	const float fps;
 	const float ups;
 

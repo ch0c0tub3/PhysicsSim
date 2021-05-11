@@ -3,7 +3,7 @@
 
 psGameLoader::psGameLoader(int width, int height, const char *title, float _fps, float _ups) : fps(_fps), ups(_ups) {
 
-	display = &psDisplay(width, height, title);
+	display = new psDisplay(width, height, title);
 }
 
 psGameLoader::~psGameLoader() {
@@ -18,9 +18,9 @@ void psGameLoader::sub_render() {
 	matrixStack.updateProjectionMatrix(GAME_FOV, display->getWidth(), display->getHeight(), GAME_NEAR, GAME_FAR);
 	shader.setUniform("projectionMatrix", matrixStack.getProjectionMatrix());
 	matrixStack.updateViewMatrix(camera);
-	matrixStack.updateModelViewMatrix(psVector3(0.f, 0.f, 10.f), psVector3(), 1.f);
+	matrixStack.updateModelViewMatrix(vec3(), vec3(), 1.f);
 	shader.setUniform("modelViewMatrix", matrixStack.getModelViewMatrix());
-	shader.setUniform("color", psVector3(0.f, 1.f, 0.3f));
+	test_mesh->render();
 	shader.unbind();
 	display->refresh();
 }
@@ -31,12 +31,43 @@ unsigned int psGameLoader::setup() {
 	if (display->initContext() & (INIT_MISMATCH | WINDOW_CREATION_FAIL))
 		return 1;
 
+	shader.create();
 	shader.setupVertexShader(readfile_s("resource/vertex.glsl"));
 	shader.setupFragmentShader(readfile_s("resource/fragment.glsl"));
 	shader.link();
 	shader.buildUniform("projectionMatrix");
 	shader.buildUniform("modelViewMatrix");
-	shader.buildUniform("color");
+	float vertices[] = {
+		-0.5f, 0.5f, 0.5f,
+		-0.5f, -0.5f, 0.5f,
+		0.5f, -0.5f, 0.5f,
+		0.5f, 0.5f, 0.5f,
+		-0.5f, 0.5f, -0.5f,
+		0.5f, 0.5f, -0.5f,
+		-0.5f, -0.5f, -0.5f,
+		0.5f, -0.5f, -0.5f,
+		-0.5f, 0.5f, -0.5f,
+		0.5f, 0.5f, -0.5f,
+		-0.5f, 0.5f, 0.5f,
+		0.5f, 0.5f, 0.5f,
+		0.5f, 0.5f, 0.5f,
+		0.5f, -0.5f, 0.5f,
+		-0.5f, 0.5f, 0.5f,
+		-0.5f, -0.5f, 0.5f,
+		-0.5f, -0.5f, -0.5f,
+		0.5f, -0.5f, -0.5f,
+		-0.5f, -0.5f, 0.5f,
+		0.5f, -0.5f, 0.5f
+	};
+	int indices[] = {
+		0, 1, 3, 3, 1, 2,
+		8, 10, 11, 9, 8, 11,
+		12, 13, 7, 5, 12, 7,
+		14, 15, 6, 4, 14, 6,
+		16, 18, 19, 17, 16, 19,
+		4, 6, 7, 5, 4, 7
+	};
+	test_mesh = new psMesh(vertices, indices, 20);
 
 	return 0;
 }
@@ -48,7 +79,7 @@ void psGameLoader::run() {
 	while (!display->shouldClose()) {
 		a += clock.getSequence();
 		while (a >= step) {
-			/* LOGICAL UPDATES HERE */
+			//LOGICAL UPDATES HERE
 			a -= step;
 		}
 
@@ -59,6 +90,7 @@ void psGameLoader::run() {
 
 void psGameLoader::terminate() {
 
+	test_mesh->dispose();
 	shader.dispose();
 	display->dispose();
 }

@@ -1,23 +1,28 @@
 #ifndef PS_RENDER_INFO_PROTOTYPE
 #define PS_RENDER_INFO_PROTOTYPE
 
-#include "util/math/psVector3.h"
-#include "util/math/psMatrix4.h"
+#include "util/math/psMath.h"
+#include "glm/vec3.hpp"
+#include "glm/mat4x4.hpp"
+#include "glm/ext/matrix_transform.hpp"
+#include "glm/ext/matrix_clip_space.hpp"
+
+using namespace glm;
 
 class psActiveRenderInfo {
 
 protected:
 
-	psVector3 position;
-	psVector3 rotation;
+	vec3 position;
+	vec3 rotation;
 
 public:
 
 	psActiveRenderInfo() {}
 
-	psActiveRenderInfo(const psVector3 &pos, const psVector3 &rot);
+	psActiveRenderInfo(const vec3 &pos, const vec3 &rot);
 
-	const psVector3 &getPosition() const {
+	const vec3 &getPosition() const {
 
 		return position;
 	}
@@ -26,7 +31,7 @@ public:
 
 	void move(float _x, float _y, float _z);
 
-	const psVector3 &getRotation() const {
+	const vec3 &getRotation() const {
 
 		return rotation;
 	}
@@ -41,30 +46,30 @@ class psMatrixStack {
 
 protected:
 
-	psMatrix4 projectionMat;
-	psMatrix4 modelViewMat;
-	psMatrix4 viewMat;
+	mat4 projectionMat;
+	mat4 modelViewMat;
+	mat4 viewMat;
 
 public:
 
 	psMatrixStack() {}
 
 	// Const to prevent unsafe modifications.
-	const psMatrix4 &getProjectionMatrix() const {
+	const mat4 &getProjectionMatrix() const {
 
 		return projectionMat;
 	}
 
 	void updateProjectionMatrix(float fov, float width, float height, float near, float far);
 
-	const psMatrix4 &getModelViewMatrix() const {
+	const mat4 &getModelViewMatrix() const {
 
 		return modelViewMat;
 	}
 
-	void updateModelViewMatrix(const psVector3 &position, const psVector3 &rotation, float scale);
+	void updateModelViewMatrix(const vec3 &position, const vec3 &rotation, float scale);
 
-	const psMatrix4 &getViewMatrix() const {
+	const mat4 &getViewMatrix() const {
 
 		return viewMat;
 	}

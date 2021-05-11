@@ -1,5 +1,4 @@
 #include "shader.hpp"
-#include <stdlib.h>
 
 psShader::~psShader() {
 
@@ -24,6 +23,18 @@ int psShader::setupShader(const char *code, int type) {
 	glAttachShader(program, shader);
 }
 
+void psShader::create() {
+
+	program = glCreateProgram();
+	// Not sure what to do here.
+	// TODO: Error handling.
+	if (!program)
+		return;
+
+	// 8 max uniforms.
+	uniforms = genmap<const char *, int>(8, hash_chrp);
+}
+
 void psShader::buildUniform(const char *name) {
 
 	int uniform = glGetUniformLocation(program, name);
@@ -43,14 +54,14 @@ void psShader::setUniform(const char *name, float value) {
 	glUniform1f(getmap(uniforms, name), value);
 }
 
-void psShader::setUniform(const char *name, const psVector3 &value) {
+void psShader::setUniform(const char *name, const vec3 &value) {
 
-	glUniform3fv(getmap(uniforms, name), 1, value.data());
+	glUniform3fv(getmap(uniforms, name), 1, &value[0]);
 }
 
-void psShader::setUniform(const char *name, const psMatrix4 &value) {
+void psShader::setUniform(const char *name, const mat4 &value) {
 
-	glUniformMatrix4fv(getmap(uniforms, name), 1, false, value.data());
+	glUniformMatrix4fv(getmap(uniforms, name), 1, false, &value[0][0]);
 }
 
 void psShader::link() {

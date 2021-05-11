@@ -2,61 +2,60 @@
 
 void psMatrixStack::updateProjectionMatrix(float fov, float width, float height, float near, float far) {
 
-	projectionMat.set(psMatrix4::_perspective(fov, width / height, near, far));
+	projectionMat = perspective(fov, width / height, near, far);
 }
 
-void psMatrixStack::updateModelViewMatrix(const psVector3 &position, const psVector3 &rotation, float scale) {
+void psMatrixStack::updateModelViewMatrix(const vec3 &position, const vec3 &rotation, float scaling) {
 
-	psMatrix4 mat;
-	mat.identity();
-	mat.translate(position);
-	mat.rotate(_frad(-rotation.x()), _frad(-rotation.y()), _frad(-rotation.z()));
-	mat *= scale;
-	modelViewMat.set(viewMat * mat);
+	mat4 mat = translate(mat4(1.f), position);
+	mat = rotate(mat, rotation.x, vec3(1.f, 0.f, 0.f));
+	mat = rotate(mat, rotation.y, vec3(0.f, 1.f, 0.f));
+	mat = rotate(mat, rotation.z, vec3(0.f, 0.f, 1.f));
+	mat = scale(mat, vec3(scaling));
+	modelViewMat = viewMat * mat;
 }
 
 void psMatrixStack::updateViewMatrix(const psActiveRenderInfo &ref) {
 
-	psVector3 pos = ref.getPosition();
-	psVector3 rot = ref.getRotation();
-	viewMat.identity();
-	viewMat.rotateX(_frad(rot.x()));
-	viewMat.rotateY(_frad(rot.y()));
-	viewMat.translate(-pos.x(), -pos.y(), -pos.z());
+	vec3 pos = ref.getPosition();
+	vec3 rot = ref.getRotation();
+	viewMat = rotate(mat4(1.f), rot.x, vec3(1.f, 0.f, 0.f));
+	viewMat = rotate(viewMat, rot.y, vec3(0.f, 1.f, 0.f));
+	viewMat = translate(viewMat, vec3(-pos.x, -pos.y, -pos.z));
 }
 
-psActiveRenderInfo::psActiveRenderInfo(const psVector3 &pos, const psVector3 &rot) {
+psActiveRenderInfo::psActiveRenderInfo(const vec3 &pos, const vec3 &rot) {
 
-	position.set(pos);
-	rotation.set(rot);
+	position = pos;
+	rotation = rot;
 }
 
 void psActiveRenderInfo::setPosition(float _x, float _y, float _z) {
 
-	position.set(_x, _y, _z);
+	position = vec3(_x, _y, _z);
 }
 
 void psActiveRenderInfo::move(float _x, float _y, float _z) {
 
 	if (_x) {
-		position.addX(-sinf(_frad(rotation.y() - 90.f)) * _x);
-		position.addZ(sinf(_frad(rotation.y() - 90.f)) * _x);
+		position.x += -sinf(_frad(rotation.y - 90.f)) * _x;
+		position.z += sinf(_frad(rotation.y - 90.f)) * _x;
 	}
 
 	if (_z) {
-		position.addX(-sinf(_frad(rotation.y())) * _z);
-		position.addZ(sinf(_frad(rotation.y())) * _z);
+		position.x += -sinf(_frad(rotation.y)) * _z;
+		position.z += sinf(_frad(rotation.y)) * _z;
 	}
 
-	position.addY(_y);
+	position.y += _y;
 }
 
 void psActiveRenderInfo::setRotation(float _x, float _y, float _z) {
 
-	rotation.set(_x, _y, _z);
+	rotation = vec3(_x, _y, _z);
 }
 
 void psActiveRenderInfo::rotate(float _x, float _y, float _z) {
 
-	rotation.add(_x, _y, _z);
+	rotation += vec3(_x, _y, _z);
 }

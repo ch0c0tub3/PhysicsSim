@@ -2,10 +2,12 @@
 #define PS_SHADER_PROTOTYPE
 
 #include <GL/glew.h>
-#include "util/math/psVector3.h"
-#include "util/math/psMatrix4.h"
+#include <glm/vec3.hpp>
+#include <glm/mat4x4.hpp>
 #include "util/hash_map.h"
 #include "util/hashfunc.h"
+
+using namespace glm;
 
 class psShader {
 
@@ -20,18 +22,11 @@ protected:
 
 public:
 
-	psShader() {
-
-		program = glCreateProgram();
-		// Not sure what to do here.
-		// TODO: Error handling.
-		if (!program)
-			return;
-
-		uniforms = genmap<const char*, int>(5, hash_chrp);
-	}
+	psShader() {}
 
 	virtual ~psShader();
+
+	virtual void create();
 
 	virtual void buildUniform(const char *name);
 
@@ -39,13 +34,13 @@ public:
 
 	virtual void setUniform(const char *name, float value);
 
-	virtual void setUniform(const char *name, const psVector3 &value);
+	virtual void setUniform(const char *name, const vec3 &value);
 
-	virtual void setUniform(const char *name, const psMatrix4 &value);
+	virtual void setUniform(const char *name, const mat4 &value);
 
 	void setupVertexShader(const char *code) {
 
-		vertShader = setupShader(code, GL_FRAGMENT_SHADER);
+		vertShader = setupShader(code, GL_VERTEX_SHADER);
 	}
 
 	void setupFragmentShader(const char *code) {

@@ -73,16 +73,16 @@ psStateDefinition psDisplay::initContext() {
 	const GLFWvidmode *vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 	glfwSetWindowPos(handle, (vidmode->width - 640) / 2, (vidmode->height - 480) / 2);
 	glfwMakeContextCurrent(handle);
-
 	printf("%s\n", "Initializing GLEW...");
 	GLenum st = glewInit();
-	if (st) {
+	if (st != GLEW_OK) {
 		printf("%s\n", glewGetErrorString(st));
 		return INIT_MISMATCH;
 	}
 
 	glfwSwapInterval(1);
 	glfwShowWindow(handle);
+	glClearColor(0.f, 0.f, 0.f, 0.f);
 
 	return SUCCESS;
 }
