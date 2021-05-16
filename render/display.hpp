@@ -15,6 +15,16 @@ enum psStateDefinition {
 	WINDOW_CREATION_FAIL = 2
 };
 
+struct mouse_input {
+
+	float prevPosX = -1.f;
+	float prevPosY = -1.f;
+	float posX = 0.f;
+	float posY = 0.f;
+	float nx = 0.f;
+	float ny = 0.f;
+};
+
 class psDisplay {
 
 protected:
@@ -23,6 +33,7 @@ protected:
 	const char *m_title;
 	int m_width;
 	int m_height;
+	struct mouse_input cursor;
 
 public:
 
@@ -37,7 +48,7 @@ public:
 
 	void setTitle(const char* title) {
 
-		if (handle && !_stricmp(m_title, title)) {
+		if (handle && title) {
 			glfwSetWindowTitle(handle, title);
 			m_title = title;
 		}
@@ -59,11 +70,36 @@ public:
 
 	virtual void setHeight(int height);
 
+	float getYaw() {
+
+		return cursor.ny;
+	}
+
+	float getPitch() {
+
+		return cursor.nx;
+	}
+
 	virtual psStateDefinition initContext();
 
 	void refresh() {
 
 		if (handle) {
+			cursor.nx = 0.f;
+			cursor.ny = 0.f;
+			if (cursor.prevPosX > 0.f && cursor.prevPosY > 0.f) {
+				float x = cursor.posX - cursor.prevPosX;
+				float y = cursor.posY - cursor.prevPosY;
+				if (x)
+					cursor.nx = x;
+
+				if (y)
+					cursor.ny = y;
+
+			}
+			
+			cursor.prevPosX = cursor.posX;
+			cursor.prevPosY = cursor.posY;
 			glfwSwapBuffers(handle);
 			glfwPollEvents();
 		}
@@ -76,6 +112,11 @@ public:
 			glfwDestroyWindow(handle);
 		
 		glfwTerminate();
+	}
+
+	bool isKeyPressed(int key) {
+
+		return glfwGetKey(handle, key) == GLFW_PRESS;
 	}
 
 	int shouldClose() {

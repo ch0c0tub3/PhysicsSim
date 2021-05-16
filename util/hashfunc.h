@@ -18,4 +18,10 @@ inline long hash_chrp(const char *key) {
 	return hash;
 }
 
+// WOW
+inline long hash_int(int key) {
+
+	return (long) key;
+}
+
 #endif

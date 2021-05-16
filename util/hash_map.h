@@ -93,21 +93,19 @@ void putmap(struct hmap_data<K, V> *map, K &key, V &value) {
 }
 
 template <class K, class V>
-V getmap(struct hmap_data<K, V> *map, K &key) {
+void getmap(struct hmap_data<K, V> *map, K &key, V *dest) {
 
 	if (!map)
-		return NULL;
+		return;
 
 	struct hmap_data_node<K, V> *node = map->data[map->hash_func(key) % map->size];
 	if (!node)
-		return NULL;
+		return;
 
 	do {
 		if (key == node->key)
-			return node->value;
+			*dest = node->value;
 	} while ((node = node->next));
-
-	return NULL;
 }
 
 template <class K, class V>

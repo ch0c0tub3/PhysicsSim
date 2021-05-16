@@ -3,7 +3,7 @@
 
 int main(void) {
 
-	psGameLoader game(640, 480, "PhysicsSim", 60.f, 20.f);
+	psGameLoader game(640, 480, "PhysicsSim", 60.f, 60.f);
 	if (game.setup())
 		return EXIT_FAILURE;
 

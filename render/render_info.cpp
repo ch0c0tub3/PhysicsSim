@@ -7,12 +7,12 @@ void psMatrixStack::updateProjectionMatrix(float fov, float width, float height,
 
 void psMatrixStack::updateModelViewMatrix(const vec3 &position, const vec3 &rotation, float scaling) {
 
-	mat4 mat = translate(mat4(1.f), position);
-	mat = rotate(mat, rotation.x, vec3(1.f, 0.f, 0.f));
-	mat = rotate(mat, rotation.y, vec3(0.f, 1.f, 0.f));
-	mat = rotate(mat, rotation.z, vec3(0.f, 0.f, 1.f));
-	mat = scale(mat, vec3(scaling));
-	modelViewMat = viewMat * mat;
+	modelViewMat = translate(mat4(1.f), position);
+	modelViewMat = rotate(modelViewMat, -rotation.x, vec3(1.f, 0.f, 0.f));
+	modelViewMat = rotate(modelViewMat, -rotation.y, vec3(0.f, 1.f, 0.f));
+	modelViewMat = rotate(modelViewMat, -rotation.z, vec3(0.f, 0.f, 1.f));
+	modelViewMat = scale(modelViewMat, vec3(scaling));
+	modelViewMat *= viewMat;
 }
 
 void psMatrixStack::updateViewMatrix(const psActiveRenderInfo &ref) {
@@ -21,7 +21,7 @@ void psMatrixStack::updateViewMatrix(const psActiveRenderInfo &ref) {
 	vec3 rot = ref.getRotation();
 	viewMat = rotate(mat4(1.f), rot.x, vec3(1.f, 0.f, 0.f));
 	viewMat = rotate(viewMat, rot.y, vec3(0.f, 1.f, 0.f));
-	viewMat = translate(viewMat, vec3(-pos.x, -pos.y, -pos.z));
+	viewMat = translate(viewMat, -pos);
 }
 
 psActiveRenderInfo::psActiveRenderInfo(const vec3 &pos, const vec3 &rot) {
@@ -39,12 +39,12 @@ void psActiveRenderInfo::move(float _x, float _y, float _z) {
 
 	if (_x) {
 		position.x += -sinf(_frad(rotation.y - 90.f)) * _x;
-		position.z += sinf(_frad(rotation.y - 90.f)) * _x;
+		position.z += cosf(_frad(rotation.y - 90.f)) * _x;
 	}
 
 	if (_z) {
 		position.x += -sinf(_frad(rotation.y)) * _z;
-		position.z += sinf(_frad(rotation.y)) * _z;
+		position.z += cosf(_frad(rotation.y)) * _z;
 	}
 
 	position.y += _y;

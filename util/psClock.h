@@ -39,7 +39,7 @@ inline double psClock::getSystemTime() const {
 	using namespace std::chrono;
 	system_clock::duration s = system_clock::now().time_since_epoch();
 
-	return s.count() * 1e-9;
+	return s.count() * 1e-7;
 }
 
 inline float psClock::getSequence() {

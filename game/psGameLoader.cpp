@@ -13,13 +13,17 @@ psGameLoader::~psGameLoader() {
 
 void psGameLoader::sub_render() {
 
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	shader.bind();
 	matrixStack.updateProjectionMatrix(GAME_FOV, display->getWidth(), display->getHeight(), GAME_NEAR, GAME_FAR);
 	shader.setUniform("projectionMatrix", matrixStack.getProjectionMatrix());
 	matrixStack.updateViewMatrix(camera);
-	matrixStack.updateModelViewMatrix(vec3(), vec3(), 1.f);
+	matrixStack.updateModelViewMatrix(vec3(1.f, 0.f, -4.f), vec3(), 1.f);
 	shader.setUniform("modelViewMatrix", matrixStack.getModelViewMatrix());
+	shader.setUniform("r", 1.f);
+	shader.setUniform("g", 0.3f);
+	shader.setUniform("b", 0.1f);
 	test_mesh->render();
 	shader.unbind();
 	display->refresh();
@@ -37,35 +41,32 @@ unsigned int psGameLoader::setup() {
 	shader.link();
 	shader.buildUniform("projectionMatrix");
 	shader.buildUniform("modelViewMatrix");
+	shader.buildUniform("r");
+	shader.buildUniform("g");
+	shader.buildUniform("b");
 	float vertices[] = {
-		-0.5f, 0.5f, 0.5f,
-		-0.5f, -0.5f, 0.5f,
-		0.5f, -0.5f, 0.5f,
-		0.5f, 0.5f, 0.5f,
-		-0.5f, 0.5f, -0.5f,
-		0.5f, 0.5f, -0.5f,
-		-0.5f, -0.5f, -0.5f,
-		0.5f, -0.5f, -0.5f,
-		-0.5f, 0.5f, -0.5f,
-		0.5f, 0.5f, -0.5f,
-		-0.5f, 0.5f, 0.5f,
-		0.5f, 0.5f, 0.5f,
-		0.5f, 0.5f, 0.5f,
-		0.5f, -0.5f, 0.5f,
-		-0.5f, 0.5f, 0.5f,
-		-0.5f, -0.5f, 0.5f,
-		-0.5f, -0.5f, -0.5f,
-		0.5f, -0.5f, -0.5f,
-		-0.5f, -0.5f, 0.5f,
-		0.5f, -0.5f, 0.5f
+		-1.0, -1.0,  1.0,
+		1.0, -1.0,  1.0,
+		1.0,  1.0,  1.0,
+		-1.0,  1.0,  1.0,
+		-1.0, -1.0, -1.0,
+		1.0, -1.0, -1.0,
+		1.0,  1.0, -1.0,
+		-1.0,  1.0, -1.0
 	};
 	int indices[] = {
-		0, 1, 3, 3, 1, 2,
-		8, 10, 11, 9, 8, 11,
-		12, 13, 7, 5, 12, 7,
-		14, 15, 6, 4, 14, 6,
-		16, 18, 19, 17, 16, 19,
-		4, 6, 7, 5, 4, 7
+		0, 1, 2,
+		2, 3, 0,
+		1, 5, 6,
+		6, 2, 1,
+		7, 6, 5,
+		5, 4, 7,
+		4, 0, 3,
+		3, 7, 4,
+		4, 5, 1,
+		1, 0, 4,
+		3, 2, 6,
+		6, 7, 3
 	};
 	test_mesh = new psMesh(vertices, indices, 20);
 
@@ -80,6 +81,33 @@ void psGameLoader::run() {
 		a += clock.getSequence();
 		while (a >= step) {
 			//LOGICAL UPDATES HERE
+			float x = 0.f, y = 0.f, z = 0.f;
+			if (display->isKeyPressed(GLFW_KEY_SPACE)) {
+				y += 0.05f;
+			}
+
+			if (display->isKeyPressed(GLFW_KEY_LEFT_SHIFT)) {
+				y -= 0.05f;
+			}
+
+			if (display->isKeyPressed(GLFW_KEY_W)) {
+				z -= 0.05f;
+			}
+
+			if (display->isKeyPressed(GLFW_KEY_S)) {
+				z += 0.05f;
+			}
+
+			if (display->isKeyPressed(GLFW_KEY_A)) {
+				x -= 0.05f;
+			}
+
+			if (display->isKeyPressed(GLFW_KEY_D)) {
+				x += 0.05f;
+			}
+
+			camera.rotate(display->getPitch() * 0.01f, display->getYaw() * 0.01f, 0.f);
+			camera.move(x, y, z);
 			a -= step;
 		}
 

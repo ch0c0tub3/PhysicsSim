@@ -67,9 +67,16 @@ psStateDefinition psDisplay::initContext() {
 			inst->close();
 
 	};
+	auto _cursorposcallback = [](GLFWwindow *window, double x, double y) {
+
+		auto inst = (psDisplay *)glfwGetWindowUserPointer(window);
+		inst->cursor.posX = (float)x;
+		inst->cursor.posY = (float)y;
+	};
 	glfwSetWindowUserPointer(handle, this);
 	glfwSetFramebufferSizeCallback(handle, _framesizecallback);
 	glfwSetKeyCallback(handle, _keycallback);
+	glfwSetCursorPosCallback(handle, _cursorposcallback);
 	const GLFWvidmode *vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 	glfwSetWindowPos(handle, (vidmode->width - 640) / 2, (vidmode->height - 480) / 2);
 	glfwMakeContextCurrent(handle);

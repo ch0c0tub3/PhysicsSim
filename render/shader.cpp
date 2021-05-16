@@ -31,7 +31,6 @@ void psShader::create() {
 	if (!program)
 		return;
 
-	// 8 max uniforms.
 	uniforms = genmap<const char *, int>(8, hash_chrp);
 }
 
@@ -46,22 +45,30 @@ void psShader::buildUniform(const char *name) {
 
 void psShader::setUniform(const char *name, int value) {
 
-	glUniform1i(getmap(uniforms, name), value);
+	int uniform;
+	getmap(uniforms, name, &uniform);
+	glUniform1i(uniform, value);
 }
 
 void psShader::setUniform(const char *name, float value) {
 
-	glUniform1f(getmap(uniforms, name), value);
+	int uniform;
+	getmap(uniforms, name, &uniform);
+	glUniform1f(uniform, value);
 }
 
 void psShader::setUniform(const char *name, const vec3 &value) {
-
-	glUniform3fv(getmap(uniforms, name), 1, &value[0]);
+	
+	int uniform;
+	getmap(uniforms, name, &uniform);
+	glUniform3fv(uniform, 1, &value[0]);
 }
 
 void psShader::setUniform(const char *name, const mat4 &value) {
 
-	glUniformMatrix4fv(getmap(uniforms, name), 1, false, &value[0][0]);
+	int uniform;
+	getmap(uniforms, name, &uniform);
+	glUniformMatrix4fv(uniform, 1, false, &value[0][0]);
 }
 
 void psShader::link() {
