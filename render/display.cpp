@@ -76,6 +76,7 @@ psStateDefinition psDisplay::initContext() {
 	glfwSetWindowUserPointer(handle, this);
 	glfwSetFramebufferSizeCallback(handle, _framesizecallback);
 	glfwSetKeyCallback(handle, _keycallback);
+	glfwSetInputMode(handle, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetCursorPosCallback(handle, _cursorposcallback);
 	const GLFWvidmode *vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 	glfwSetWindowPos(handle, (vidmode->width - 640) / 2, (vidmode->height - 480) / 2);
@@ -90,6 +91,7 @@ psStateDefinition psDisplay::initContext() {
 	glfwSwapInterval(1);
 	glfwShowWindow(handle);
 	glClearColor(0.f, 0.f, 0.f, 0.f);
+	glEnable(GL_DEPTH_TEST);
 
 	return SUCCESS;
 }

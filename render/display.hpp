@@ -5,8 +5,9 @@
 #include <Windows.h>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <string.h>
-#include <iostream>
+#include "glm/gtx/transform.hpp"
+
+using namespace glm;
 
 enum psStateDefinition {
 
@@ -17,12 +18,10 @@ enum psStateDefinition {
 
 struct mouse_input {
 
-	float prevPosX = -1.f;
-	float prevPosY = -1.f;
 	float posX = 0.f;
 	float posY = 0.f;
-	float nx = 0.f;
-	float ny = 0.f;
+	float pitch;
+	float yaw;
 };
 
 class psDisplay {
@@ -70,14 +69,14 @@ public:
 
 	virtual void setHeight(int height);
 
-	float getYaw() {
+	float getViewYaw() {
 
-		return cursor.ny;
+		return cursor.yaw;
 	}
 
-	float getPitch() {
+	float getViewPitch() {
 
-		return cursor.nx;
+		return cursor.pitch;
 	}
 
 	virtual psStateDefinition initContext();
@@ -85,21 +84,12 @@ public:
 	void refresh() {
 
 		if (handle) {
-			cursor.nx = 0.f;
-			cursor.ny = 0.f;
-			if (cursor.prevPosX > 0.f && cursor.prevPosY > 0.f) {
-				float x = cursor.posX - cursor.prevPosX;
-				float y = cursor.posY - cursor.prevPosY;
-				if (x)
-					cursor.nx = x;
+			if (cursor.posX)
+				cursor.yaw = cursor.posX * 0.001f;
 
-				if (y)
-					cursor.ny = y;
+			if (cursor.posY)
+				cursor.pitch = cursor.posY * 0.001f;
 
-			}
-			
-			cursor.prevPosX = cursor.posX;
-			cursor.prevPosY = cursor.posY;
 			glfwSwapBuffers(handle);
 			glfwPollEvents();
 		}

@@ -19,8 +19,9 @@ void psGameLoader::sub_render() {
 	matrixStack.updateProjectionMatrix(GAME_FOV, display->getWidth(), display->getHeight(), GAME_NEAR, GAME_FAR);
 	shader.setUniform("projectionMatrix", matrixStack.getProjectionMatrix());
 	matrixStack.updateViewMatrix(camera);
-	matrixStack.updateModelViewMatrix(vec3(1.f, 0.f, -4.f), vec3(), 1.f);
-	shader.setUniform("modelViewMatrix", matrixStack.getModelViewMatrix());
+	matrixStack.updateModelMatrix(vec3(1.f, 0.f, -4.f), vec3(), 1.f);
+	shader.setUniform("modelMatrix", matrixStack.getModelMatrix());
+	shader.setUniform("viewMatrix", matrixStack.getViewMatrix());
 	shader.setUniform("r", 1.f);
 	shader.setUniform("g", 0.3f);
 	shader.setUniform("b", 0.1f);
@@ -40,19 +41,20 @@ unsigned int psGameLoader::setup() {
 	shader.setupFragmentShader(readfile_s("resource/fragment.glsl"));
 	shader.link();
 	shader.buildUniform("projectionMatrix");
-	shader.buildUniform("modelViewMatrix");
+	shader.buildUniform("modelMatrix");
+	shader.buildUniform("viewMatrix");
 	shader.buildUniform("r");
 	shader.buildUniform("g");
 	shader.buildUniform("b");
 	float vertices[] = {
-		-1.0, -1.0,  1.0,
-		1.0, -1.0,  1.0,
-		1.0,  1.0,  1.0,
-		-1.0,  1.0,  1.0,
-		-1.0, -1.0, -1.0,
-		1.0, -1.0, -1.0,
-		1.0,  1.0, -1.0,
-		-1.0,  1.0, -1.0
+		-1.f, -1.f,  1.f,
+		1.f, -1.f,  1.f,
+		1.f,  1.f,  1.f,
+		-1.f,  1.f,  1.f,
+		-1.f, -1.f, -1.f,
+		1.f, -1.f, -1.f,
+		1.f,  1.f, -1.f,
+		-1.f,  1.f, -1.f
 	};
 	int indices[] = {
 		0, 1, 2,
@@ -106,7 +108,8 @@ void psGameLoader::run() {
 				x += 0.05f;
 			}
 
-			camera.rotate(display->getPitch() * 0.01f, display->getYaw() * 0.01f, 0.f);
+			// Direct movement, for smooth camera prefer <camera.rotate(_x,_y_z)>
+			camera.setRotation(display->getViewPitch(), display->getViewYaw(), 0.f);
 			camera.move(x, y, z);
 			a -= step;
 		}

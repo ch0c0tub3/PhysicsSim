@@ -47,7 +47,7 @@ class psMatrixStack {
 protected:
 
 	mat4 projectionMat;
-	mat4 modelViewMat;
+	mat4 modelMat;
 	mat4 viewMat;
 
 public:
@@ -62,12 +62,12 @@ public:
 
 	void updateProjectionMatrix(float fov, float width, float height, float near, float far);
 
-	const mat4 &getModelViewMatrix() const {
+	const mat4 &getModelMatrix() const {
 
-		return modelViewMat;
+		return modelMat;
 	}
 
-	void updateModelViewMatrix(const vec3 &position, const vec3 &rotation, float scale);
+	void updateModelMatrix(const vec3 &position, const vec3 &rotation, float scale);
 
 	const mat4 &getViewMatrix() const {
 
