@@ -10,6 +10,7 @@
 #include "render/display.hpp"
 #include "util/psClock.h"
 #include "render/prot/psMesh.h"
+#include "render/prot/psTextureLoader.h"
 
 class psGameLoader {
 
@@ -18,7 +19,6 @@ protected:
 	psClock m_clock;
 	psMatrixStack m_matrixStack;
 	psActiveRenderInfo m_camera;
-	// No default constructor.
 	psDisplay *m_display;
 	psMesh *m_test_mesh;
 	psShader m_shader;
