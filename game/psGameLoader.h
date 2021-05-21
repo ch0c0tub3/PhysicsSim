@@ -16,16 +16,14 @@ class psGameLoader {
 
 protected:
 
-	psClock clock;
-	psMatrixStack matrixStack;
-	psActiveRenderInfo camera;
-	// No default constructor.
-	psDisplay *display;
-	psMesh *test_mesh;
-	psShader shader;
-	const float fps;
-	const float ups;
-	psTextureLoader textures;
+	psClock m_clock;
+	psMatrixStack m_matrixStack;
+	psActiveRenderInfo m_camera;
+	psDisplay *m_display;
+	psMesh *m_test_mesh;
+	psShader m_shader;
+	const float m_fps;
+	const float m_ups;
 
 private:
 
@@ -33,7 +31,7 @@ private:
 
 public:
 
-	psGameLoader(int width, int height, const char *title, float _fps, float _ups);
+	psGameLoader(const int &width, const int &height, const char *title, const float &_fps, const float &_ups);
 
 	~psGameLoader();
 

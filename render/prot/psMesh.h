@@ -127,13 +127,13 @@ private:
 
 protected:
 
-	unsigned int vao;
-	unsigned int *vbos;
-	size_t num_vertices;
+	unsigned int m_vao;
+	unsigned int *m_vbos;
+	size_t m_numVertices;
 
 public:
 
-	psMesh(float vertices[], int indices[], size_t sizev);
+	psMesh(const float vertices[], const int indices[], const size_t &sizev);
 
 	psMesh(float vertices[], float uvs[], float normals[], int indices[], size_t sizev);
 
