@@ -1,24 +1,26 @@
 #ifndef PS_SHADER_PROTOTYPE
 #define PS_SHADER_PROTOTYPE
 
+#define GLEW_STATIC
+
+#include <iostream>
+
 #include <GL/glew.h>
 #include <glm/vec3.hpp>
 #include <glm/mat4x4.hpp>
 #include "util/hash_map.h"
 #include "util/hashfunc.h"
 
-using namespace glm;
-
 class psShader {
 
 protected:
 
-	unsigned int program;
-	unsigned int vertShader;
-	unsigned int fragShader;
-	struct hmap_data<const char *, int> *uniforms;
+	unsigned int m_program;
+	unsigned int m_vertShader;
+	unsigned int m_fragShader;
+	struct hmap_data<const char *, int> *m_uniforms;
 
-	virtual int setupShader(const char *code, int type);
+	virtual int setupShader(const char *code, const int &type);
 
 public:
 
@@ -30,30 +32,30 @@ public:
 
 	virtual void buildUniform(const char *name);
 
-	virtual void setUniform(const char *name, int value);
+	virtual void setUniform(const char *name, const int &value);
 
-	virtual void setUniform(const char *name, float value);
+	virtual void setUniform(const char *name, const float &value);
 
-	virtual void setUniform(const char *name, const vec3 &value);
+	virtual void setUniform(const char *name, const glm::vec3 &value);
 
-	virtual void setUniform(const char *name, const mat4 &value);
+	virtual void setUniform(const char *name, const glm::mat4 &value);
 
 	void setupVertexShader(const char *code) {
 
-		vertShader = setupShader(code, GL_VERTEX_SHADER);
+		m_vertShader = setupShader(code, GL_VERTEX_SHADER);
 	}
 
 	void setupFragmentShader(const char *code) {
 
-		fragShader = setupShader(code, GL_FRAGMENT_SHADER);
+		m_fragShader = setupShader(code, GL_FRAGMENT_SHADER);
 	}
 
 	virtual void link();
 
 	void bind() {
 
-		if (program)
-			glUseProgram(program);
+		if (m_program)
+			glUseProgram(m_program);
 
 	}
 
@@ -65,8 +67,8 @@ public:
 	void dispose() {
 
 		unbind();
-		if (program)
-			glDeleteProgram(program);
+		if (m_program)
+			glDeleteProgram(m_program);
 
 	}
 
