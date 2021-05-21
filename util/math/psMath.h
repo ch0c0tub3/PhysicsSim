@@ -7,7 +7,7 @@
 
 inline float _frad(float x) {
 
-	return x * M_PI / 180.f;
+	return x * (float)M_PI / 180.f;
 }
 
 inline float _fsqrt(float x) {

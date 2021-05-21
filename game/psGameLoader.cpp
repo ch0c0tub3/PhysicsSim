@@ -19,13 +19,13 @@ void psGameLoader::sub_render() {
 	matrixStack.updateProjectionMatrix(GAME_FOV, display->getWidth(), display->getHeight(), GAME_NEAR, GAME_FAR);
 	shader.setUniform("projectionMatrix", matrixStack.getProjectionMatrix());
 	matrixStack.updateViewMatrix(camera);
-	matrixStack.updateModelMatrix(vec3(1.f, 0.f, -4.f), vec3(), 1.f);
+	matrixStack.updateModelMatrix(vec3(), vec3(), 1.f);
 	shader.setUniform("modelMatrix", matrixStack.getModelMatrix());
 	shader.setUniform("viewMatrix", matrixStack.getViewMatrix());
-	shader.setUniform("r", 1.f);
-	shader.setUniform("g", 0.3f);
-	shader.setUniform("b", 0.1f);
+	shader.setUniform("texture_sampler", 0);
+	textures.bind("default");
 	test_mesh->render();
+	textures.unbind();
 	shader.unbind();
 	display->refresh();
 }
@@ -43,34 +43,49 @@ unsigned int psGameLoader::setup() {
 	shader.buildUniform("projectionMatrix");
 	shader.buildUniform("modelMatrix");
 	shader.buildUniform("viewMatrix");
-	shader.buildUniform("r");
-	shader.buildUniform("g");
-	shader.buildUniform("b");
+	shader.buildUniform("texture_sampler");
+	textures.load("resource/square.png", "default");
 	float vertices[] = {
-		-1.f, -1.f,  1.f,
-		1.f, -1.f,  1.f,
-		1.f,  1.f,  1.f,
-		-1.f,  1.f,  1.f,
-		-1.f, -1.f, -1.f,
 		1.f, -1.f, -1.f,
-		1.f,  1.f, -1.f,
-		-1.f,  1.f, -1.f
+		1.f, -1.f, 1.f,
+		-1.f, -1.f, 1.f,
+		-1.f, -1.f, -1.f,
+		1.f, 1.f, -1.f,
+		1.f, 1.f, 1.f,
+		-1.f, 1.f, 1.f,
+		-1.f, 1.f, -1.f,
+		1.f, -1.f, -1.f,
+		1.f, -1.f, -1.f,
+		1.f, -1.f, 1.f,
+		1.f, -1.f, 1.f,
+		-1.f, -1.f, -1.f,
+		-1.f, -1.f, -1.f,
+		1.f, 1.f, -1.f,
+		1.f, 1.f, -1.f,
+		-1.f, -1.f, 1.f,
+		-1.f, -1.f, 1.f,
+		1.f, 1.f, 1.f,
+		1.f, 1.f, 1.f,
+		-1.f, 1.f, 1.f,
+		-1.f, 1.f, 1.f,
+		-1.f, 1.f, -1.f,
+		-1.f, 1.f, -1.f
 	};
 	int indices[] = {
-		0, 1, 2,
-		2, 3, 0,
-		1, 5, 6,
-		6, 2, 1,
-		7, 6, 5,
-		5, 4, 7,
-		4, 0, 3,
-		3, 7, 4,
-		4, 5, 1,
-		1, 0, 4,
-		3, 2, 6,
-		6, 7, 3
+		10, 16, 12,
+		23, 21, 19,
+		14, 18, 11,
+		5, 20, 17,
+		2, 6, 22,
+		0, 3, 7,
+		8, 10, 12,
+		15, 23, 19,
+		9, 14, 11,
+		1, 5, 17,
+		13, 2, 22,
+		4, 0, 7
 	};
-	test_mesh = new psMesh(vertices, indices, 20);
+	test_mesh = new psMesh(vertices, indices, 36);
 
 	return 0;
 }

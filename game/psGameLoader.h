@@ -10,6 +10,7 @@
 #include "render/display.hpp"
 #include "util/psClock.h"
 #include "render/prot/psMesh.h"
+#include "render/prot/psTextureLoader.h"
 
 class psGameLoader {
 
@@ -24,6 +25,7 @@ protected:
 	psShader shader;
 	const float fps;
 	const float ups;
+	psTextureLoader textures;
 
 private:
 

@@ -37,17 +37,12 @@ void psActiveRenderInfo::setPosition(float _x, float _y, float _z) {
 
 void psActiveRenderInfo::move(float _x, float _y, float _z) {
 
-	if (_x) {
-		position.x += -sinf(_frad(rotation.y - 90.f)) * _x;
-		position.z += cosf(_frad(rotation.y - 90.f)) * _x;
-	}
-
-	if (_z) {
-		position.x += -sinf(_frad(rotation.y)) * _z;
-		position.z += cosf(_frad(rotation.y)) * _z;
-	}
-
-	position.y += _y;
+	vec3 offset = vec3(_x, 0.f, _z);
+	//offset = rotateX(offset, -rotation.x);
+	offset = rotateY(offset, -rotation.y);
+	// offset = rotateZ(offset, -rotation.z);
+	offset.y = _y;
+	position += offset;
 }
 
 void psActiveRenderInfo::setRotation(float _x, float _y, float _z) {
