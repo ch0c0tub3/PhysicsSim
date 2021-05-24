@@ -1,8 +1,6 @@
 #ifndef PS_SHADER_PROTOTYPE
 #define PS_SHADER_PROTOTYPE
 
-#define GLEW_STATIC
-
 #include <iostream>
 
 #include <GL/glew.h>
@@ -26,8 +24,6 @@ public:
 
 	psShader() {}
 
-	virtual ~psShader();
-
 	virtual void create();
 
 	virtual void buildUniform(const char *name);
@@ -35,6 +31,8 @@ public:
 	virtual void setUniform(const char *name, const int &value);
 
 	virtual void setUniform(const char *name, const float &value);
+
+	virtual void setUniform(const char *name, const glm::vec2 &value);
 
 	virtual void setUniform(const char *name, const glm::vec3 &value);
 
@@ -70,6 +68,7 @@ public:
 		if (m_program)
 			glDeleteProgram(m_program);
 
+		freemap(m_uniforms);
 	}
 
 };

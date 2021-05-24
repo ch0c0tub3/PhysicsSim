@@ -9,8 +9,7 @@
 #include "render/shader.hpp"
 #include "render/display.hpp"
 #include "util/psClock.h"
-#include "render/prot/psMesh.h"
-#include "render/prot/psTextureLoader.h"
+#include "render/prot/psModel.h"
 
 class psGameLoader {
 
@@ -20,7 +19,7 @@ protected:
 	psMatrixStack m_matrixStack;
 	psActiveRenderInfo m_camera;
 	psDisplay *m_display;
-	psMesh *m_test_mesh;
+	psModel *m_test_model;
 	psShader m_shader;
 	const float m_fps;
 	const float m_ups;
@@ -32,8 +31,6 @@ private:
 public:
 
 	psGameLoader(const int &width, const int &height, const char *title, const float &_fps, const float &_ups);
-
-	~psGameLoader();
 
 	unsigned int setup();
 

@@ -1,10 +1,5 @@
 #include "shader.hpp"
 
-psShader::~psShader() {
-
-	dispose();
-}
-
 int psShader::setupShader(const char *code, const int &type) {
 
 	unsigned int shader = glCreateShader(type);
@@ -83,6 +78,13 @@ void psShader::setUniform(const char *name, const float &value) {
 	glUniform1f(uniform, value);
 }
 
+void psShader::setUniform(const char *name, const glm::vec2 &value) {
+
+	int uniform;
+	getmap(m_uniforms, name, &uniform);
+	glUniform2fv(uniform, 1, &value[0]);
+}
+
 void psShader::setUniform(const char *name, const glm::vec3 &value) {
 	
 	int uniform;
@@ -99,17 +101,14 @@ void psShader::setUniform(const char *name, const glm::mat4 &value) {
 
 void psShader::link() {
 
+	int state;
+	static char info_log[512];
 	glLinkProgram(m_program);
-	int err;
-	glGetProgramiv(m_program, GL_LINK_STATUS, &err);
-	// Lalalalalalala.
-	if(!err)
-	{
-		static char infoLog[512];
-		glGetProgramInfoLog(m_program, 512, NULL, infoLog);
-
-		std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
-
+	glGetProgramiv(m_program, GL_LINK_STATUS, &state);
+	// Lalalalalalala
+	if (!state) {
+		glGetProgramInfoLog(m_program, 512, NULL, info_log);
+		std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << info_log << std::endl;
 		return;
 	}
 
@@ -120,13 +119,10 @@ void psShader::link() {
 		glDetachShader(m_program, m_fragShader);
 
 	glValidateProgram(m_program);
-	glGetProgramiv(m_program, GL_VALIDATE_STATUS, &err);
-	if(!err)
-	{
-		static char infoLog[512];
-		glGetProgramInfoLog(m_program, 512, NULL, infoLog);
-
-		std::cout << "ERROR::SHADER::PROGRAM::RECALÉ\n" << infoLog << std::endl;
+	glGetProgramiv(m_program, GL_VALIDATE_STATUS, &state);
+	if (!state) {
+		glGetProgramInfoLog(m_program, 512, NULL, info_log);
+		std::cout << "ERROR::SHADER::PROGRAM::RECALÉ\n" << info_log << std::endl;
 		// This is completely useless.
 		return;
 	}

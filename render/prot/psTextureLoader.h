@@ -7,21 +7,37 @@
 #include "stb_image.h"
 #include "util/hash_map.h"
 #include "util/hashfunc.h"
+#include "render/shader.hpp"
+#include <string>
+
+enum class psTextureType {
+
+	NONE,
+	DIFFUSE,
+	SPECULAR,
+	NORMAL,
+	HEIGHT,
+	SPECIAL
+};
+
+typedef struct {
+
+	unsigned int id;
+	psTextureType type;
+} texture;
 
 class psTextureLoader {
 
 protected:
 
-	struct hmap_data<const char *, unsigned int> *identities
-		= genmap<const char *, unsigned int>(8, hash_chrp);
+	struct hmap_data<const char *, texture> *identities
+		= genmap<const char *, texture>(2, hash_chrp);
 
 public:
 
-	~psTextureLoader();
+	void load(const char *filename, psTextureType textureType);
 
-	void load(const char *filename, const char *name);
-
-	void bind(const char *name);
+	void bind(psShader &shader);
 
 	void unbind();
 

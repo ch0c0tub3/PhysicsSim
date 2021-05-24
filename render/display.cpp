@@ -47,6 +47,7 @@ psStateDefinition psDisplay::initContext() {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_SAMPLES, 4);
 	handle = glfwCreateWindow(m_width, m_height, m_title, NULL, NULL);
 	if (!handle) {
 		dispose();
@@ -56,15 +57,42 @@ psStateDefinition psDisplay::initContext() {
 	auto _framesizecallback = [](GLFWwindow * window, int width, int height) {
 
 		auto inst = (psDisplay *)glfwGetWindowUserPointer(window);
-		inst->m_width = width;
-		inst->m_height = height;
-		glViewport(0, 0, inst->m_width, inst->m_height);
+		if (inst->m_isfullscreen) {
+			inst->m_width = width;
+			inst->m_height = height;
+		}
+
+		glViewport(0, 0, width, height);
 	};
 	auto _keycallback = [](GLFWwindow *window, int key, int scancode, int action, int mods) {
 
 		auto inst = (psDisplay *)glfwGetWindowUserPointer(window);
-		if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
-			inst->close();
+		if (action == GLFW_RELEASE) {
+			switch (key) {
+			case GLFW_KEY_ESCAPE:
+				inst->close();
+				break;
+
+			case GLFW_KEY_F11:
+				GLFWmonitor *monitor;
+				monitor = glfwGetPrimaryMonitor();
+				if (inst->m_isfullscreen) {
+					glfwSetWindowMonitor(window, NULL, 0, 0, inst->m_width, inst->m_height, 0);
+				}
+				else {
+					const GLFWvidmode *vidmode;
+					vidmode = glfwGetVideoMode(monitor);
+					glfwSetWindowMonitor(window, monitor, 0, 0, vidmode->width, vidmode->height, 0);
+				}
+
+				inst->m_isfullscreen = !inst->m_isfullscreen;
+
+			default:
+				break;
+
+			}
+
+		}
 
 	};
 	auto _cursorposcallback = [](GLFWwindow *window, double x, double y) {

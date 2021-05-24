@@ -3,6 +3,8 @@
 
 #include <stdlib.h>
 
+typedef void (*mapconsumer)(void *value);
+
 template <class K, class V>
 struct hmap_data_node {
 
@@ -44,7 +46,7 @@ struct hmap_data<K, V> *genmap(size_t size, long (*hash_func)(K)) {
 }
 
 template <class K, class V>
-void freemap(struct hmap_data<K, V> *map) {
+void freemap(struct hmap_data<K, V> *map, mapconsumer consumer = NULL) {
 
 	if (!map)
 		return;
@@ -53,6 +55,9 @@ void freemap(struct hmap_data<K, V> *map) {
 		struct hmap_data_node<K, V> *ptr = map->data[i];
 		while (ptr) {
 			struct hmap_data_node<K, V> *tmp = ptr->next;
+			if (consumer)
+				consumer(&ptr->value);
+
 			free(ptr);
 			ptr = tmp;
 		}
@@ -105,7 +110,27 @@ void getmap(struct hmap_data<K, V> *map, K &key, V *dest) {
 	do {
 		if (key == node->key)
 			*dest = node->value;
+
 	} while ((node = node->next));
+}
+
+template <class K, class V>
+int containsmap(struct hmap_data<K, V> *map, K &key, int (*comp)(K, K)) {
+
+	if (!map)
+		return 0;
+
+	struct hmap_data_node<K, V> *node = map->data[map->hash_func(key) % map->size];
+	if (!node)
+		return 0;
+
+	do {
+		if (!comp(node->key, key))
+			return 1;
+
+	} while ((node = node->next));
+
+	return 0;
 }
 
 template <class K, class V>

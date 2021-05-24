@@ -33,6 +33,7 @@ protected:
 	int m_width;
 	int m_height;
 	struct mouse_input cursor;
+	bool m_isfullscreen;
 
 public:
 

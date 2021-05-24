@@ -49,8 +49,3 @@ void psActiveRenderInfo::setRotation(float _x, float _y, float _z) {
 
 	rotation = vec3(_x, _y, _z);
 }
-
-void psActiveRenderInfo::rotate(float _x, float _y, float _z) {
-
-	rotation += vec3(_x, _y, _z);
-}

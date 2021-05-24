@@ -39,8 +39,6 @@ public:
 
 	void setRotation(float _x, float _y, float _z);
 
-	void rotate(float _x, float _y, float _z);
-
 };
 
 class psMatrixStack {
