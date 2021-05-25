@@ -10,6 +10,7 @@
 #include "render/display.hpp"
 #include "util/psClock.h"
 #include "render/prot/psModel.h"
+#include "render/prot/psLightSource.h"
 
 class psGameLoader {
 
@@ -21,6 +22,7 @@ protected:
 	psDisplay *m_display;
 	psModel *m_test_model;
 	psShader m_shader;
+	psLightSource m_light;
 	const float m_fps;
 	const float m_ups;
 
