@@ -38,11 +38,14 @@ void psActiveRenderInfo::setPosition(float _x, float _y, float _z) {
 void psActiveRenderInfo::move(float _x, float _y, float _z) {
 
 	vec3 offset = vec3(_x, 0.f, _z);
-	//offset = rotateX(offset, -rotation.x);
+	offset = rotateX(offset, -rotation.x);
 	offset = rotateY(offset, -rotation.y);
-	// offset = rotateZ(offset, -rotation.z);
-	offset.y = _y;
-	position += offset;
+	offset = rotateZ(offset, -rotation.z);
+	offset.y += _y;
+	if (offset.x || offset.y || offset.z)
+		offset = normalize(offset);
+
+	position += offset * 0.1f;
 }
 
 void psActiveRenderInfo::setRotation(float _x, float _y, float _z) {

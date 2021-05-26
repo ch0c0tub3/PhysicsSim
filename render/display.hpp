@@ -20,8 +20,6 @@ struct mouse_input {
 
 	float posX = 0.f;
 	float posY = 0.f;
-	float pitch;
-	float yaw;
 };
 
 class psDisplay {
@@ -72,12 +70,12 @@ public:
 
 	float getViewYaw() {
 
-		return cursor.yaw;
+		return cursor.posX;
 	}
 
 	float getViewPitch() {
 
-		return cursor.pitch;
+		return cursor.posY;
 	}
 
 	virtual psStateDefinition initContext();
@@ -85,12 +83,6 @@ public:
 	void refresh() {
 
 		if (handle) {
-			if (cursor.posX)
-				cursor.yaw = cursor.posX * 0.001f;
-
-			if (cursor.posY)
-				cursor.pitch = cursor.posY * 0.001f;
-
 			glfwSwapBuffers(handle);
 			glfwPollEvents();
 		}
