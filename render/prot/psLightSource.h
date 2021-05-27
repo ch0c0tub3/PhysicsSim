@@ -15,20 +15,18 @@ protected:
 
 public:
 
-	psLightSource(glm::vec3 pos, glm::vec3 rgb, const float intensity) : m_power(intensity) {
+	psLightSource(const glm::vec3 &pos,const glm::vec3 &rgb, const float &intensity) : m_power(intensity), m_source(pos), m_tint(rgb) {
 
-		m_source = pos;
-		m_tint = rgb;
 		//m_factor = glm::vec3(1.f, 0.f, 0.f);
 	}
 
 	void createUniforms(psShader &shader);
 
-	void setPos(float _x, float _y, float _z);
+	void setPos(const float &_x,const float &_y,const float &_z);
 
-	void setRGB(float r, float g, float b);
+	void setRGB(const float &r,const float &g,const float &b);
 
-	void setIntensity(float intensity);
+	void setIntensity(const float &intensity);
 
 	void bind(psShader &shader);
 

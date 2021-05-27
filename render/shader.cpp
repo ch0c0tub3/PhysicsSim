@@ -4,8 +4,7 @@ int psShader::setupShader(const char *code, const int &type) {
 
 	unsigned int shader = glCreateShader(type);
 	// Still error handling problems..
-	if(!shader)
-	{
+	if (!shader) {
 		std::cout << "ERROR::SHADER::NOT_CREATED" << std::endl;
 		return 0;
 	}
@@ -15,8 +14,7 @@ int psShader::setupShader(const char *code, const int &type) {
 	int err;
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &err);
 	// This is getting boring right ?
-	if(!err)
-	{
+	if (!err) {
 		static char infoLog[512];
 		glGetShaderInfoLog(shader, 512, NULL, infoLog);
 		
@@ -24,16 +22,16 @@ int psShader::setupShader(const char *code, const int &type) {
 
 		switch(type)
 		{
-			case GL_VERTEX_SHADER:
-				std::cout << "VERTEX";
-				break;
+		case GL_VERTEX_SHADER:
+			std::cout << "VERTEX";
+			break;
 
-			case GL_FRAGMENT_SHADER:
-				std::cout << "FRAGMENT";
-				break;
+		case GL_FRAGMENT_SHADER:
+			std::cout << "FRAGMENT";
+			break;
 
-			default:
-				break;
+		default:
+			break;
 		}
 		std::cout << "::COMPILE_ERROR\n" << infoLog << std::endl;
 
@@ -122,7 +120,7 @@ void psShader::link() {
 	glGetProgramiv(m_program, GL_VALIDATE_STATUS, &state);
 	if (!state) {
 		glGetProgramInfoLog(m_program, 512, NULL, info_log);
-		std::cout << "ERROR::SHADER::PROGRAM::RECALÉ\n" << info_log << std::endl;
+		std::cout << "ERROR::SHADER::PROGRAM::NOT_VALIDATED\n" << info_log << std::endl;
 		// This is completely useless.
 		return;
 	}

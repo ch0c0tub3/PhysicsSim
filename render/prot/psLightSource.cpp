@@ -7,21 +7,21 @@ void psLightSource::createUniforms(psShader &shader) {
 	shader.buildUniform("light_power");
 }
 
-void psLightSource::setPos(float _x, float _y, float _z) {
+void psLightSource::setPos(const float &_x,const float &_y,const float &_z) {
 
 	m_source.x = _x;
 	m_source.y = _y;
 	m_source.z = _z;
 }
 
-void psLightSource::setRGB(float r, float g, float b) {
+void psLightSource::setRGB(const float &r,const float &g,const float &b) {
 
 	m_tint.x = r;
 	m_tint.y = g;
 	m_tint.z = b;
 }
 
-void psLightSource::setIntensity(float intensity) {
+void psLightSource::setIntensity(const float &intensity) {
 
 	m_power = intensity;
 }
