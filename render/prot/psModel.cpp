@@ -32,9 +32,7 @@ void psModel::gen_textures(aiMaterial *material, aiTextureType type, psTextureTy
 		material->GetTexture(type, i, &path);
 		std::string str = m_filesource + path.C_Str();
 		const char *data = str.c_str();
-		char *pass = new char[strlen(data) + 1];
-		strcpy(pass, data);
-		m_texturecache.load(pass, alias);
+		m_texturecache.load(data, alias);
 	}
 
 }
