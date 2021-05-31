@@ -2,9 +2,10 @@
 #define PS_DISPLAY_PROTOTYPE
 
 // Note for later: try to find a better alternative to this shit.
-#include <Windows.h>
+//#include <Windows.h>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+
 #include "glm/gtx/transform.hpp"
 
 using namespace glm;

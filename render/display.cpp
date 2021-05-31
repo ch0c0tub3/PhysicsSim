@@ -1,11 +1,12 @@
 #include "display.hpp"
 
-psDisplay::psDisplay(int width, int height, const char *title) {
+psDisplay::psDisplay(int width, int height, const char *title) : 
+	handle(nullptr), 
+	m_width(width),
+	m_height(height),
+	m_title(title),
+	m_isfullscreen(false) {
 
-	handle = NULL;
-	m_width = width;
-	m_height = height;
-	m_title = title;
 }
 
 psDisplay::~psDisplay() {
@@ -48,11 +49,14 @@ psStateDefinition psDisplay::initContext() {
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_SAMPLES, 4);
+
 	handle = glfwCreateWindow(m_width, m_height, m_title, NULL, NULL);
 	if (!handle) {
 		dispose();
 		return WINDOW_CREATION_FAIL;
 	}
+
+	glfwSetWindowUserPointer(handle, this);
 
 	auto _framesizecallback = [](GLFWwindow * window, int width, int height) {
 
@@ -64,6 +68,8 @@ psStateDefinition psDisplay::initContext() {
 
 		glViewport(0, 0, width, height);
 	};
+	glfwSetFramebufferSizeCallback(handle, _framesizecallback);
+
 	auto _keycallback = [](GLFWwindow *window, int key, int scancode, int action, int mods) {
 
 		auto inst = (psDisplay *)glfwGetWindowUserPointer(window);
@@ -85,6 +91,7 @@ psStateDefinition psDisplay::initContext() {
 					glfwSetWindowMonitor(window, monitor, 0, 0, vidmode->width, vidmode->height, 0);
 
 				inst->m_isfullscreen = !inst->m_isfullscreen;
+				break;
 
 			default:
 				break;
@@ -94,6 +101,8 @@ psStateDefinition psDisplay::initContext() {
 		}
 
 	};
+	glfwSetKeyCallback(handle, _keycallback);
+
 	auto _cursorposcallback = [](GLFWwindow *window, double x, double y) {
 
 		auto inst = (psDisplay *)glfwGetWindowUserPointer(window);
@@ -101,16 +110,15 @@ psStateDefinition psDisplay::initContext() {
 		inst->cursor.posX = fmod(inst->cursor.posX + (float)x * 0.001f, pi<float>() * 2.f);
 		inst->cursor.posY = clamp(inst->cursor.posY + (float)y * 0.001f, -pi<float>() * 0.5f, pi<float>() * 0.5f);
 	};
-	glfwSetWindowUserPointer(handle, this);
-	glfwSetFramebufferSizeCallback(handle, _framesizecallback);
-	glfwSetKeyCallback(handle, _keycallback);
 	glfwSetInputMode(handle, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	//if (glfwRawMouseMotionSupported())
 	//	glfwSetInputMode(handle, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 	glfwSetCursorPosCallback(handle, _cursorposcallback);
+
 	const GLFWvidmode *vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 	glfwSetWindowPos(handle, (vidmode->width - 640) / 2, (vidmode->height - 480) / 2);
 	glfwMakeContextCurrent(handle);
+
 	printf("%s\n", "Initializing GLEW...");
 	GLenum st = glewInit();
 	if (st != GLEW_OK) {

@@ -1,54 +1,45 @@
-#include "render_info.h"
+	#include "render_info.h"
 
-void psMatrixStack::updateProjectionMatrix(float fov, float width, float height, float near, float far) {
+void psActiveRenderInfo::updateProjectionMatrix(const float &fov, const float &width, const float &height, const float &near, const float &far) {
 
-	projectionMat = perspective(fov, width / height, near, far);
+	m_projectionMat = glm::perspective(fov, width / height, near, far);
 }
 
-void psMatrixStack::updateModelMatrix(const vec3 &position, const vec3 &rotation, float scaling) {
+void psActiveRenderInfo::updateViewMatrix() {
 
-	modelMat = translate(mat4(1.f), position);
-	modelMat = rotate(modelMat, -rotation.x, vec3(1.f, 0.f, 0.f));
-	modelMat = rotate(modelMat, -rotation.y, vec3(0.f, 1.f, 0.f));
-	modelMat = rotate(modelMat, -rotation.z, vec3(0.f, 0.f, 1.f));
-	modelMat = scale(modelMat, vec3(scaling));
+	glm::vec3 pos = m_position;
+	glm::vec3 rot = m_rotation;
+	m_viewMat = glm::rotate(glm::mat4(1.f), rot.x, glm::vec3(1.f,0.f,0.f));
+	m_viewMat = glm::rotate(m_viewMat, rot.y, glm::vec3(0.f,1.f,0.f));
+	m_viewMat = glm::rotate(m_viewMat, rot.z, glm::vec3(0.f,0.f,1.f));
+	m_viewMat = glm::translate(m_viewMat, -pos);
 }
 
-void psMatrixStack::updateViewMatrix(const psActiveRenderInfo &ref) {
+psActiveRenderInfo::psActiveRenderInfo(const glm::vec3 &pos, const glm::vec3 &rot) : 
+	m_position(pos),
+	m_rotation(rot) {
 
-	vec3 pos = ref.getPosition();
-	vec3 rot = ref.getRotation();
-	viewMat = rotate(mat4(1.f), rot.x, vec3(1.f, 0.f, 0.f));
-	viewMat = rotate(viewMat, rot.y, vec3(0.f, 1.f, 0.f));
-	viewMat = rotate(viewMat, rot.z, vec3(0.f, 0.f, 1.f));
-	viewMat = translate(viewMat, -pos);
 }
 
-psActiveRenderInfo::psActiveRenderInfo(const vec3 &pos, const vec3 &rot) {
+void psActiveRenderInfo::setPosition(const float &_x, const float &_y, const float &_z) {
 
-	position = pos;
-	rotation = rot;
+	m_position = glm::vec3(_x, _y, _z);
 }
 
-void psActiveRenderInfo::setPosition(float _x, float _y, float _z) {
+void psActiveRenderInfo::move(const float &_x, const float &_y, const float &_z) {
 
-	position = vec3(_x, _y, _z);
-}
-
-void psActiveRenderInfo::move(float _x, float _y, float _z) {
-
-	vec3 offset = vec3(_x, 0.f, _z);
-	offset = rotateX(offset, -rotation.x);
-	offset = rotateY(offset, -rotation.y);
-	offset = rotateZ(offset, -rotation.z);
+	glm::vec3 offset = glm::vec3(_x, 0.f, _z);
+	offset = glm::rotateX(offset, -m_rotation.x);
+	offset = glm::rotateY(offset, -m_rotation.y);
+	offset = glm::rotateZ(offset, -m_rotation.z);
 	offset.y += _y;
 	if (offset.x || offset.y || offset.z)
 		offset = normalize(offset);
 
-	position += offset * 0.1f;
+	m_position += offset * 0.1f;
 }
 
-void psActiveRenderInfo::setRotation(float _x, float _y, float _z) {
+void psActiveRenderInfo::setRotation(const float &_x, const float &_y, const float &_z) {
 
-	rotation = vec3(_x, _y, _z);
+	m_rotation = glm::vec3(_x, _y, _z);
 }

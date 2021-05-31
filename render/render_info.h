@@ -5,75 +5,53 @@
 #include "glm/vec3.hpp"
 #include "glm/mat4x4.hpp"
 #include "glm/ext/matrix_transform.hpp"
-#include "glm/ext/matrix_clip_space.hpp"
+//#include "glm/ext/matrix_clip_space.hpp"
 #include "glm/gtx/rotate_vector.hpp"
-
-using namespace glm;
 
 class psActiveRenderInfo {
 
 protected:
 
-	vec3 position;
-	vec3 rotation;
+	glm::vec3 m_position;
+	glm::vec3 m_rotation;
+	glm::mat4 m_projectionMat;
+	glm::mat4 m_viewMat;
 
 public:
 
 	psActiveRenderInfo() {}
 
-	psActiveRenderInfo(const vec3 &pos, const vec3 &rot);
+	psActiveRenderInfo(const glm::vec3 &pos, const glm::vec3 &rot);
 
-	const vec3 &getPosition() const {
+	const glm::vec3 &getPosition() const {
 
-		return position;
+		return m_position;
 	}
 
-	void setPosition(float _x, float _y, float _z);
+	void setPosition(const float &_x, const float &_y, const float &_z);
 
-	void move(float _x, float _y, float _z);
+	void move(const float &_x, const float &_y, const float &_z);
 
-	const vec3 &getRotation() const {
+	const glm::vec3 &getRotation() const {
 
-		return rotation;
+		return m_rotation;
 	}
 
-	void setRotation(float _x, float _y, float _z);
-
-};
-
-class psMatrixStack {
-
-protected:
-
-	mat4 projectionMat;
-	mat4 modelMat;
-	mat4 viewMat;
-
-public:
-
-	psMatrixStack() {}
+	void setRotation(const float &_x, const float &_y, const float &_z);
 
 	// Const to prevent unsafe modifications.
-	const mat4 &getProjectionMatrix() const {
+	const glm::mat4 &getProjectionMatrix() const {
 
-		return projectionMat;
+		return m_projectionMat;
 	}
 
-	void updateProjectionMatrix(float fov, float width, float height, float near, float far);
+	const glm::mat4 &getViewMatrix() const {
 
-	const mat4 &getModelMatrix() const {
-
-		return modelMat;
+		return m_viewMat;
 	}
 
-	void updateModelMatrix(const vec3 &position, const vec3 &rotation, float scale);
-
-	const mat4 &getViewMatrix() const {
-
-		return viewMat;
-	}
-
-	void updateViewMatrix(const psActiveRenderInfo &ref);
+	void updateProjectionMatrix(const float &fov, const float &width, const float &height, const float &near, const float &far);
+	void updateViewMatrix();
 
 };
 

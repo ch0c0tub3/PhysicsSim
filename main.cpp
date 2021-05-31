@@ -1,7 +1,7 @@
 #include "game/psGameLoader.h"
 #include "util/psFileLoader.h"
 
-int main(void) {
+int main() {
 
 	psGameLoader game(1080, 608, "PhysicsSim", 60.f, 60.f);
 	if (game.setup())
