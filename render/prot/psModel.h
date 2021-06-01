@@ -10,6 +10,20 @@
 #include <vector>
 #include "glm/vec3.hpp"
 #include "glm/vec2.hpp"
+#include <reactphysics3d/reactphysics3d.h>
+
+typedef struct {
+
+	size_t num_vertices;
+	float *vertices;
+	int v_stride;
+	unsigned int *indices;
+	int i_stride;
+	size_t num_faces;
+	rp3d::PolygonVertexArray::PolygonFace *faces;
+	rp3d::PolygonVertexArray::VertexDataType vertex_type;
+	rp3d::PolygonVertexArray::IndexDataType index_type;
+} rp3d_manifold;
 
 class psModel {
 

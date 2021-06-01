@@ -20,4 +20,5 @@ vec4 process_light(vec4 overlay) {
 void main() {
 
 	fragColor = process_light(texture(texture_diffuse1, uv));
+	fragColor.a = 1.0;
 }

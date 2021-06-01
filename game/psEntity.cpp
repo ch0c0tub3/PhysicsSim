@@ -1,7 +1,7 @@
 #include "psEntity.hpp"
 
-psEntity::psEntity(const char *filename) :
-	m_model(new psModel(filename)) {
+psEntity::psEntity(psModel *model) :
+	m_model(model) {
 
 }
 

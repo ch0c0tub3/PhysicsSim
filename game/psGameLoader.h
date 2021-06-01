@@ -30,8 +30,10 @@ protected:
 	rp3d::PhysicsCommon m_physicsCommon;
 	rp3d::PhysicsWorld *m_world;
 
-	rp3d::CollisionBody *m_floor;
+	rp3d::RigidBody *m_floor;
 	rp3d::Collider *m_floorCollider;
+
+	psModel *m_commonmodel;
 
 	const float m_fps;
 	const float m_ups;

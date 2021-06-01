@@ -19,14 +19,15 @@ void psGameLoader::sub_render() {
 	m_camera.updateProjectionMatrix(GAME_FOV, m_display->getWidth(), m_display->getHeight(), GAME_NEAR, GAME_FAR);
 	m_shader.setUniform("projectionMatrix", m_camera.getProjectionMatrix());
 
-	m_arrEntity.at(0)->updatePos();
-	m_shader.setUniform("modelMatrix", m_arrEntity.at(0)->getModelMatrix());
-
 	m_camera.updateViewMatrix();
 	m_shader.setUniform("viewMatrix", m_camera.getViewMatrix());
 	m_light.bind(m_shader);
 
-	m_arrEntity.at(0)->render(m_shader);
+	for (psEntity *entity : m_arrEntity) {
+		entity->updatePos();
+		m_shader.setUniform("modelMatrix", entity->getModelMatrix());
+		entity->render(m_shader);
+	}
 	
 	m_shader.unbind();
 
@@ -62,25 +63,19 @@ unsigned int psGameLoader::setup() {
 	m_gridshader.buildUniform("projectionMatrix");
 	m_gridshader.buildUniform("viewMatrix");
 	m_gridmodel = new psModel("resource/scene/plane.obj");
+	m_commonmodel = new psModel("resource/scene/obama/cube.obj");
 
-	rp3d::Vector3 position(0.f, 0.f, -10.f);
+	rp3d::Vector3 position(0.f, -1.0f, 0.f);
 	rp3d::Quaternion orientation = rp3d::Quaternion::identity();
 	rp3d::Transform transform {position, orientation};
-	m_floor = m_world->createCollisionBody(transform);
+	m_floor = m_world->createRigidBody(transform);
+	m_floor->setType(rp3d::BodyType::STATIC);
 
-	const rp3d::Vector3 halfExtents(25.f, 25.f, 2.f);
+	const rp3d::Vector3 halfExtents(25.f, 1.f, 25.f);
 	rp3d::BoxShape *boxShape {m_physicsCommon.createBoxShape(halfExtents)};
 
 	transform = rp3d::Transform::identity();
 	m_floorCollider = m_floor->addCollider(boxShape, transform);
-
-	m_arrEntity.push_back(new psEntity("resource/scene/Crysler_new_yorker_1980.obj"));
-	
-	rp3d::Vector3 entPos = rp3d::Vector3(0.f, 0.f, 0.f);
-	rp3d::Quaternion entRot = rp3d::Quaternion::identity();
-	rp3d::Transform entTransform  = rp3d::Transform(entPos, entRot);
-	m_arrEntity.at(0)->setBody(m_world->createRigidBody(transform));
-	//m_arrEntity.at(0)->setBodyType(rp3d::BodyType::STATIC);
 
 	return 0;
 }
@@ -122,24 +117,28 @@ void psGameLoader::run() {
 				x += 0.05f;
 			}
 
+			if (m_display->isKeyPressed(GLFW_KEY_T)) {
+				psEntity *entity = new psEntity(m_commonmodel);
+
+				rp3d::Transform entTransform = rp3d::Transform::identity();
+				rp3d::Vector3 translation(0.f, 13.f, 0.f);
+				entTransform.setPosition(translation);
+				rp3d::RigidBody *rigidbody = m_world->createRigidBody(entTransform);
+				const rp3d::Vector3 halfExtents1(1.f, 1.f, 1.f);
+				rigidbody->addCollider(m_physicsCommon.createBoxShape(halfExtents1), rp3d::Transform::identity());
+				entity->setBody(rigidbody);
+				m_arrEntity.push_back(entity);
+			}
+
 			// Direct movement, for smooth camera prefer <camera.rotate(_x,_y_z)>
 			m_camera.setRotation(m_display->getViewPitch(), m_display->getViewYaw(), 0.f);
 			m_camera.move(x, y, z);
 			accumulator -= stepu;
 		}
 
-		float factor {accumulator / stepu};
-
-		rp3d::Transform currTransform = m_arrEntity.at(0)->getBody()->getTransform();
-		static rp3d::Transform prevTransform = currTransform;
-
-		rp3d::Transform interpolatedTransform {rp3d::Transform::interpolateTransforms(prevTransform, currTransform, factor)};
-
 		//float last = m_clock.getHook() + stepf;
 		//if(m_clock.getSystemTime() >= last)
 		sub_render();
-
-		prevTransform = currTransform;
 
 	}
 
@@ -149,7 +148,11 @@ void psGameLoader::terminate() {
 
 	m_gridmodel->dispose();
 	m_gridshader.dispose();
-	m_arrEntity.at(0)->kill();
+	for (psEntity *entity : m_arrEntity) {
+		entity->kill();
+	}
+
+	m_commonmodel->dispose();
 	m_shader.dispose();
 	m_display->dispose();
 }

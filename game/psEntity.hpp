@@ -16,8 +16,6 @@ protected:
 	psModel				*m_model;
 
 	rp3d::RigidBody		*m_body;
-	rp3d::BoxShape		*m_boxShape;
-	rp3d::Collider		*m_collider;
 	rp3d::Vector3		m_pos;
 
 	rp3d::Quaternion	m_rotation;
@@ -27,7 +25,7 @@ protected:
 
 public:
 
-	psEntity(const char *filename);
+	psEntity(psModel *model);
 	~psEntity();
 
 	void kill();
