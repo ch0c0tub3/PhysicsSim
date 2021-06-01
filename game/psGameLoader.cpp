@@ -29,6 +29,13 @@ void psGameLoader::sub_render() {
 	m_arrEntity.at(0)->render(m_shader);
 	
 	m_shader.unbind();
+
+	m_gridshader.bind();
+	m_gridshader.setUniform("projectionMatrix", m_camera.getProjectionMatrix());
+	m_gridshader.setUniform("viewMatrix", m_camera.getViewMatrix());
+	m_gridmodel->render(m_gridshader);
+	m_gridshader.unbind();
+
 	m_display->refresh();
 }
 
@@ -47,6 +54,14 @@ unsigned int psGameLoader::setup() {
 	m_shader.buildUniform("viewMatrix");
 	m_shader.buildUniform("texture_diffuse1");
 	m_light.createUniforms(m_shader);
+
+	m_gridshader.create();
+	m_gridshader.setupVertexShader(readfile_s("resource/grid_vertex.glsl"));
+	m_gridshader.setupFragmentShader(readfile_s("resource/grid_fragment.glsl"));
+	m_gridshader.link();
+	m_gridshader.buildUniform("projectionMatrix");
+	m_gridshader.buildUniform("viewMatrix");
+	m_gridmodel = new psModel("resource/scene/plane.obj");
 
 	rp3d::Vector3 position(0.f, 0.f, -10.f);
 	rp3d::Quaternion orientation = rp3d::Quaternion::identity();
@@ -132,6 +147,8 @@ void psGameLoader::run() {
 
 void psGameLoader::terminate() {
 
+	m_gridmodel->dispose();
+	m_gridshader.dispose();
 	m_arrEntity.at(0)->kill();
 	m_shader.dispose();
 	m_display->dispose();

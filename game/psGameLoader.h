@@ -36,6 +36,10 @@ protected:
 	const float m_fps;
 	const float m_ups;
 
+	// FOR DEBUGGING
+	psShader m_gridshader;
+	psModel *m_gridmodel;
+
 private:
 
 	void sub_render();
