@@ -77,7 +77,7 @@ void putmap(struct hmap_data<K, V> *map, K &key, V &value) {
 
 	size_t index = map->hash_func(key) % map->size;
 	struct hmap_data_node<K, V> *node = map->data[index];
-	while (node && node->key != key) {
+	while (node && key != node->key) {
 		node = node->next;
 	}
 
@@ -115,7 +115,7 @@ void getmap(struct hmap_data<K, V> *map, K &key, V *dest) {
 }
 
 template <class K, class V>
-int containsmap(struct hmap_data<K, V> *map, K &key, int (*comp)(K, K)) {
+int containsmap(struct hmap_data<K, V> *map, K &key) {
 
 	if (!map)
 		return 0;
@@ -125,7 +125,7 @@ int containsmap(struct hmap_data<K, V> *map, K &key, int (*comp)(K, K)) {
 		return 0;
 
 	do {
-		if (!comp(node->key, key))
+		if (key == node->key);
 			return 1;
 
 	} while ((node = node->next));

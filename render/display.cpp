@@ -109,7 +109,7 @@ psStateDefinition psDisplay::initContext() {
 	//	glfwSetInputMode(handle, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 	glfwSetCursorPosCallback(handle, _cursorposcallback);
 	const GLFWvidmode *vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-	glfwSetWindowPos(handle, (vidmode->width - 640) / 2, (vidmode->height - 480) / 2);
+	glfwSetWindowPos(handle, (vidmode->width - m_width) / 2, (vidmode->height - m_height) / 2);
 	glfwMakeContextCurrent(handle);
 	printf("%s\n", "Initializing GLEW...");
 	GLenum st = glewInit();
@@ -120,8 +120,7 @@ psStateDefinition psDisplay::initContext() {
 
 	glfwSwapInterval(1);
 	glfwShowWindow(handle);
-	glClearColor(0.f, 0.f, 0.f, 0.f);
-	glEnable(GL_DEPTH_TEST);
+	glClearColor(0.f, 0.f, 0.f, 1.f);
 
 	return SUCCESS;
 }

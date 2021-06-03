@@ -1,6 +1,7 @@
 #ifndef PS_MODEL_PROTOTYPE
 #define PS_MODEL_PROTOTYPE
 
+
 #include "render/shader.hpp"
 #include "psMesh.h"
 #include "psTextureLoader.h"
@@ -10,15 +11,17 @@
 #include <vector>
 #include "glm/vec3.hpp"
 #include "glm/vec2.hpp"
+#include "btBulletDynamicsCommon.h"
 
 class psModel {
 
 protected:
 
-	psTextureLoader m_texturecache;
 	psMesh *m_components;
 	size_t m_numComponents;
 	std::string m_filesource;
+	btCollisionShape *m_shape;
+	psTextureLoader l_texturecache;
 
 	psMesh create_mesh(aiMesh *aimesh, const aiScene *scene);
 
@@ -44,6 +47,8 @@ public:
 	void render(psShader &shader);
 
 	void addSpecialTexture(const char *path);
+
+	btCollisionShape *get_btshape();
 
 	void dispose();
 

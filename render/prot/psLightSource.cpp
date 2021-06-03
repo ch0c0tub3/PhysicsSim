@@ -1,12 +1,5 @@
 #include "psLightSource.h"
 
-void psLightSource::createUniforms(psShader &shader) {
-
-	shader.buildUniform("light_pos");
-	shader.buildUniform("light_tint");
-	shader.buildUniform("light_power");
-}
-
 void psLightSource::setPos(float _x, float _y, float _z) {
 
 	m_source.x = _x;

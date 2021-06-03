@@ -68,6 +68,8 @@ public:
 
 	void updateModelMatrix(const vec3 &position, const vec3 &rotation, float scale);
 
+	void updateModelMatrix(const mat4 &transform, float scale);
+
 	const mat4 &getViewMatrix() const {
 
 		return viewMat;

@@ -4,12 +4,13 @@ psModel::psModel(const char *filename) {
 
 	Assimp::Importer importer;
 	const aiScene *scene = importer.ReadFile(filename, aiProcess_CalcTangentSpace | aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
-	if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE)
+	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE)
 		throw importer.GetErrorString();
 
 	std::vector<psMesh> meshes;
 	m_filesource = filename;
 	m_filesource = m_filesource.substr(0, m_filesource.find_last_of('/') + 1);
+	m_shape = new btConvexHullShape();
 	if (scene->mRootNode)
 		parse_meshes(scene->mRootNode, scene, meshes);
 
@@ -22,6 +23,8 @@ psModel::psModel(const char *filename) {
 		m_components[i] = meshes[i];
 	}
 
+	((btConvexHullShape *)m_shape)->optimizeConvexHull();
+	((btConvexHullShape *)m_shape)->initializePolyhedralFeatures();
 }
 
 void psModel::gen_textures(aiMaterial *material, aiTextureType type, psTextureType alias) {
@@ -34,7 +37,7 @@ void psModel::gen_textures(aiMaterial *material, aiTextureType type, psTextureTy
 		const char *data = str.c_str();
 		char *pass = new char[strlen(data) + 1];
 		strcpy(pass, data);
-		m_texturecache.load(pass, alias);
+		l_texturecache.load(pass, alias);
 	}
 
 }
@@ -47,6 +50,7 @@ psMesh psModel::create_mesh(aiMesh *aimesh, const aiScene *scene) {
 		aiVector3D vertex = aimesh->mVertices[i];
 		psMeshData data;
 		data.vertex = glm::vec3(vertex.x, vertex.y, vertex.z);
+		((btConvexHullShape *)m_shape)->addPoint(btVector3(vertex.x, vertex.y, vertex.z));
 		if (aimesh->HasNormals()) {
 			aiVector3D normal = aimesh->mNormals[i];
 			data.normal = glm::vec3(normal.x, normal.y, normal.z);
@@ -60,6 +64,7 @@ psMesh psModel::create_mesh(aiMesh *aimesh, const aiScene *scene) {
 			data.uv = glm::vec2(0.f, 0.f);
 		}
 
+		data.texture_id = (float)(aimesh->mMaterialIndex - 1);
 		vertices.push_back(data);
 	}
 
@@ -82,17 +87,22 @@ psMesh psModel::create_mesh(aiMesh *aimesh, const aiScene *scene) {
 
 void psModel::render(psShader &shader) {
 
+	l_texturecache.bind(shader);
 	for (size_t i = 0; i < m_numComponents; i++) {
-		m_texturecache.bind(shader);
 		m_components[i].render();
-		m_texturecache.unbind();
 	}
 
+	l_texturecache.unbind();
 }
 
 void psModel::addSpecialTexture(const char *path) {
 
-	m_texturecache.load(path, psTextureType::SPECIAL);
+	l_texturecache.load(path, psTextureType::SPECIAL);
+}
+
+btCollisionShape *psModel::get_btshape() {
+
+	return m_shape;
 }
 
 void psModel::dispose() {
@@ -103,5 +113,5 @@ void psModel::dispose() {
 
 	free(m_components);
 	m_numComponents = 0;
-	m_texturecache.dispose();
+	l_texturecache.dispose();
 }

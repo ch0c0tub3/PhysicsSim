@@ -13,6 +13,7 @@ struct psMeshData {
 	glm::vec3 vertex;
 	glm::vec2 uv;
 	glm::vec3 normal;
+	float texture_id;
 };
 
 class psMesh {
@@ -20,7 +21,8 @@ class psMesh {
 protected:
 
 	unsigned int m_vao;
-	unsigned int m_vbos[2];
+	size_t m_numVbos;
+	unsigned int *m_vbos;
 	size_t m_numIndices;
 
 public:

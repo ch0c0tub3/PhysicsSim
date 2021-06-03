@@ -22,8 +22,6 @@ public:
 		//m_factor = glm::vec3(1.f, 0.f, 0.f);
 	}
 
-	void createUniforms(psShader &shader);
-
 	void setPos(float _x, float _y, float _z);
 
 	void setRGB(float r, float g, float b);

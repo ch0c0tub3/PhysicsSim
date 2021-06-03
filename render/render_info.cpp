@@ -14,6 +14,11 @@ void psMatrixStack::updateModelMatrix(const vec3 &position, const vec3 &rotation
 	modelMat = scale(modelMat, vec3(scaling));
 }
 
+void psMatrixStack::updateModelMatrix(const mat4 &transform, float scaling) {
+
+	modelMat = scale(transform, vec3(scaling));
+}
+
 void psMatrixStack::updateViewMatrix(const psActiveRenderInfo &ref) {
 
 	vec3 pos = ref.getPosition();
@@ -45,7 +50,7 @@ void psActiveRenderInfo::move(float _x, float _y, float _z) {
 	if (offset.x || offset.y || offset.z)
 		offset = normalize(offset);
 
-	position += offset * 0.1f;
+	position += offset * 0.3f;
 }
 
 void psActiveRenderInfo::setRotation(float _x, float _y, float _z) {

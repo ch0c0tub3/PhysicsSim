@@ -2,7 +2,7 @@
 
 void psTextureLoader::load(const char *filename, psTextureType textureType) {
 
-	if (containsmap(identities, filename, std::strcmp))
+	if (containsmap(identities, filename))
 		return;
 
 	int width, height, channels;
@@ -19,8 +19,8 @@ void psTextureLoader::load(const char *filename, psTextureType textureType) {
 	glGenerateMipmap(GL_TEXTURE_2D);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	stbi_image_free(data);
 	tex.type = textureType;
@@ -29,12 +29,12 @@ void psTextureLoader::load(const char *filename, psTextureType textureType) {
 
 void psTextureLoader::bind(psShader &shader) {
 
-	unsigned int dc = 1;
-	unsigned int ds = 1;
-	unsigned int dn = 1;
-	unsigned int dh = 1;
-	unsigned int dd = 1;
-	unsigned int ds0 = 1;
+	unsigned int dc = 0;
+	unsigned int ds = 0;
+	unsigned int dn = 0;
+	unsigned int dh = 0;
+	unsigned int dd = 0;
+	unsigned int ds0 = 0;
 	int num = 0;
 	for (size_t i = 0; i < identities->size; i++) {
 		struct hmap_data_node<const char *, texture> *ptr = identities->data[i];
@@ -68,6 +68,7 @@ void psTextureLoader::bind(psShader &shader) {
 
 			}
 
+			//printf("%s %d\n", name.c_str(), ptr->value.id);
 			shader.setUniform(name.c_str(), num++);
 			glBindTexture(GL_TEXTURE_2D, ptr->value.id);
 			ptr = ptr->next;

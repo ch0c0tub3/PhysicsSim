@@ -78,6 +78,24 @@ public:
 		return cursor.posY;
 	}
 
+	int getSrcWidth() const {
+
+		int width, height;
+		if (handle)
+			glfwGetWindowSize(handle, &width, &height);
+
+		return width;
+	}
+
+	int getSrcHeight() const {
+
+		int width, height;
+		if (handle)
+			glfwGetWindowSize(handle, &width, &height);
+
+		return height;
+	}
+
 	virtual psStateDefinition initContext();
 
 	void refresh() {
@@ -100,6 +118,11 @@ public:
 	bool isKeyPressed(int key) {
 
 		return glfwGetKey(handle, key) == GLFW_PRESS;
+	}
+
+	bool isKeyReleased(int key) {
+
+		return glfwGetKey(handle, key) == GLFW_RELEASE;
 	}
 
 	int shouldClose() {
