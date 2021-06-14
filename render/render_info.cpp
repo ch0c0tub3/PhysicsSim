@@ -7,12 +7,10 @@ void psActiveRenderInfo::updateProjectionMatrix(const float &fov, const float &w
 
 void psActiveRenderInfo::updateViewMatrix() {
 
-	glm::vec3 pos = m_position;
-	glm::vec3 rot = m_rotation;
-	m_viewMat = glm::rotate(glm::mat4(1.f), rot.x, glm::vec3(1.f,0.f,0.f));
-	m_viewMat = glm::rotate(m_viewMat, rot.y, glm::vec3(0.f,1.f,0.f));
-	m_viewMat = glm::rotate(m_viewMat, rot.z, glm::vec3(0.f,0.f,1.f));
-	m_viewMat = glm::translate(m_viewMat, -pos);
+	m_viewMat = glm::rotate(glm::mat4(1.f), m_rotation.x, glm::vec3(1.f,0.f,0.f));
+	m_viewMat = glm::rotate(m_viewMat, m_rotation.y, glm::vec3(0.f,1.f,0.f));
+	m_viewMat = glm::rotate(m_viewMat, m_rotation.z, glm::vec3(0.f,0.f,1.f));
+	m_viewMat = glm::translate(m_viewMat, -m_position);
 }
 
 psActiveRenderInfo::psActiveRenderInfo(const glm::vec3 &pos, const glm::vec3 &rot) : 
