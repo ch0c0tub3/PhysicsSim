@@ -7,19 +7,15 @@ psEntity::psEntity(psModel *model) :
 
 psEntity::~psEntity() {
 
-	kill();
 }
 
 void psEntity::kill() {
 
-	m_model->dispose();
 }
 
 void psEntity::updatePos() {
 
 	m_transform = m_body->getTransform();
-	m_pos = m_transform.getPosition();
-	m_rotation = m_transform.getOrientation();
 	
 	updateModelMatrix();
 }
@@ -44,14 +40,14 @@ void psEntity::setBodyType(const rp3d::BodyType &type) {
 
 void psEntity::setPosition(const rp3d::Vector3 &position) {
 
-	const rp3d::Transform transform(position, m_rotation);
+	const rp3d::Transform transform(position, m_transform.getOrientation());
 	m_body->setTransform(transform);
 	updatePos();
 }
 
 void psEntity::setRotation(const rp3d::Quaternion &rotation) {
 
-	const rp3d::Transform transform(m_pos, rotation);
+	const rp3d::Transform transform(m_transform.getPosition(), rotation);
 	m_body->setTransform(transform);
 	updatePos();
 }

@@ -16,9 +16,6 @@ protected:
 	psModel				*m_model;
 
 	rp3d::RigidBody		*m_body;
-	rp3d::Vector3		m_pos;
-
-	rp3d::Quaternion	m_rotation;
 	rp3d::Transform		m_transform;
 
 	glm::mat4 m_modelMat;
@@ -39,7 +36,7 @@ public:
 	void updateModelMatrix();
 
 	void setBody(rp3d::RigidBody *body);
-	const rp3d::RigidBody* getBody() const {
+	rp3d::RigidBody* getBody() const {
 		return m_body;
 	}
 
@@ -47,12 +44,12 @@ public:
 
 	void setPosition(const rp3d::Vector3 &position);
 	const rp3d::Vector3 &getPos() const {
-		return m_pos;
+		return m_transform.getPosition();
 	}
 	
 	void setRotation(const rp3d::Quaternion &rotation);
 	const rp3d::Quaternion &getRotation() const {
-		return m_rotation;
+		return m_transform.getOrientation();
 	}
 
 	void render(psShader& shader);
