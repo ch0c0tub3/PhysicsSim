@@ -103,6 +103,11 @@ public:
 		return glfwGetKey(handle, key) == GLFW_PRESS;
 	}
 
+	bool isKeyReleased(int key) {
+
+		return glfwGetKey(handle, key) == GLFW_RELEASE;
+	}
+
 	int shouldClose() {
 
 		// Still serious doubts.

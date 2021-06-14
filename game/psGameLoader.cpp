@@ -63,7 +63,7 @@ unsigned int psGameLoader::setup() {
 	m_gridshader.buildUniform("projectionMatrix");
 	m_gridshader.buildUniform("viewMatrix");
 	m_gridmodel = new psModel("resource/scene/plane.obj");
-	m_commonmodel = new psModel("resource/scene/obama/cube.obj");
+	m_commonModel = new psModel("resource/scene/obama/cube.obj");
 
 	rp3d::Vector3 position(0.f, -1.0f, 0.f);
 	rp3d::Quaternion orientation = rp3d::Quaternion::identity();
@@ -75,7 +75,7 @@ unsigned int psGameLoader::setup() {
 	rp3d::BoxShape *boxShape {m_physicsCommon.createBoxShape(halfExtents)};
 
 	transform = rp3d::Transform::identity();
-	m_floorCollider = m_floor->addCollider(boxShape, transform);
+	m_floor->addCollider(boxShape, transform);
 
 	return 0;
 }
@@ -85,6 +85,10 @@ void psGameLoader::run() {
 	float accumulator{0.f};
 	//const float stepf{1.f / m_fps};
 	const float stepu{1.f / m_ups};
+
+	int iCount{0};
+	bool isKeyGReleased{false};
+
 	while (!m_display->shouldClose()) {
 		accumulator += m_clock.getSequence();
 		while (accumulator >= stepu) {
@@ -118,16 +122,45 @@ void psGameLoader::run() {
 			}
 
 			if (m_display->isKeyPressed(GLFW_KEY_T)) {
-				psEntity *entity = new psEntity(m_commonmodel);
 
-				rp3d::Transform entTransform = rp3d::Transform::identity();
-				rp3d::Vector3 translation(0.f, 13.f, 0.f);
-				entTransform.setPosition(translation);
-				rp3d::RigidBody *rigidbody = m_world->createRigidBody(entTransform);
-				const rp3d::Vector3 halfExtents1(1.f, 1.f, 1.f);
-				rigidbody->addCollider(m_physicsCommon.createBoxShape(halfExtents1), rp3d::Transform::identity());
-				entity->setBody(rigidbody);
-				m_arrEntity.push_back(entity);
+				// Limiting 1 per stepu
+				if (iCount < 1) {
+
+					psEntity *entity = new psEntity(m_commonModel);
+
+					rp3d::Transform entTransform = rp3d::Transform::identity();
+					rp3d::Vector3 translation(0.f, 13.f, 0.f);
+					entTransform.setPosition(translation);
+					rp3d::RigidBody *rigidbody = m_world->createRigidBody(entTransform);
+					const rp3d::Vector3 halfExtents1(1.f, 1.f, 1.f);
+					rigidbody->addCollider(m_physicsCommon.createBoxShape(halfExtents1), rp3d::Transform::identity());
+					entity->setBody(rigidbody);
+					m_arrEntity.push_back(entity);
+
+					++iCount;
+				}
+			}
+
+			if (m_display->isKeyPressed(GLFW_KEY_G)) {
+
+				if (isKeyGReleased) {
+
+					if (!m_arrEntity.empty()) {
+
+						auto &entity = m_arrEntity.back();
+						m_world->destroyRigidBody(entity->getBody());
+
+						entity->kill();
+						delete entity;
+						m_arrEntity.pop_back();
+					}
+					isKeyGReleased = false;
+				}
+			}
+
+			if (m_display->isKeyReleased(GLFW_KEY_G)) {
+
+				isKeyGReleased = true;
 			}
 
 			// Direct movement, for smooth camera prefer <camera.rotate(_x,_y_z)>
@@ -139,7 +172,7 @@ void psGameLoader::run() {
 		//float last = m_clock.getHook() + stepf;
 		//if(m_clock.getSystemTime() >= last)
 		sub_render();
-
+		iCount = 0;
 	}
 
 }
@@ -148,11 +181,16 @@ void psGameLoader::terminate() {
 
 	m_gridmodel->dispose();
 	m_gridshader.dispose();
-	for (psEntity *entity : m_arrEntity) {
+	for (auto &entity : m_arrEntity) {
 		entity->kill();
+		delete entity;
 	}
 
-	m_commonmodel->dispose();
+	m_arrEntity.clear();
+
+	m_world->destroyRigidBody(m_floor);
+
+	m_commonModel->dispose();
 	m_shader.dispose();
 	m_display->dispose();
 }
